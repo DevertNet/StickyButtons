@@ -35,14 +35,32 @@ html {
 	padding: 20px;
 	border-radius: 5px;
 	text-decoration: none;
-	position: absolute;
+	display: inline-block;
+	
+	transition: background-color 0.2s;
 }
 
-.sticky {
-	position: absolute;
+.button:hover {
+	background-color: #35b416;
 }
 
 
+.button.absolute1 {
+	position: absolute;
+	z-index: 1;
+}
+
+.button.absolute2 {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+
+.placeholder {
+	position: absolute;
+	background-color: rgba(226, 0, 26, 0.34);
+}
 
 
 
