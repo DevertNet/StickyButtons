@@ -5,7 +5,7 @@
 		// Create the defaults once
 		var pluginName = "stickyButtons",
 		defaults = {
-			propertyName: "value",
+			placeholder: true,
 			maxDistance: 200,
 			
 			mouseenterAnimationProperties: { scale: 1.2 },
@@ -27,8 +27,9 @@
 		// The actual plugin constructor
 		function Plugin ( element, options ) {
 				this.element = element;
-				this.placeholder = $('<div></div>').addClass("placeholder").appendTo($("body"));
 				this.settings = $.extend( {}, defaults, options );
+				
+				if(this.settings.placeholder) this.placeholder = $('<div></div>').addClass("placeholder").appendTo($("body"));
 				this.settings.mouseenterAnimationOptions = $.extend( {}, this.settings.mouseenterAnimationOptions, this.settings.mouseenterAnimationOptionsImportant );
 				this.settings.mouseleaveAnimationOptions = $.extend( {}, this.settings.mouseleaveAnimationOptions, this.settings.mouseleaveAnimationOptionsImportant );
 				this._defaults = defaults;
@@ -44,13 +45,19 @@
 			init: function () {
 				
 				//get css position prob
-				var cssPosition = 'relative';
-				if ($(this.element).css('position') == 'absolute') cssPosition = 'absolute';
+				var cssPosition = $(this.element).css('position');
+				if (cssPosition != 'absolute' && cssPosition != 'relative') cssPosition = 'relative';
+				
+				//get css display prob
+				var cssDisplay = $(this.element).css('display');
+				if (cssDisplay == 'inline') cssDisplay = 'inline-block';
+				console.log( cssDisplay );
 					
 				//set z-index and position
 				$(this.element).css({
 					position: cssPosition,
-					zIndex: 3
+					zIndex: 3,
+					display: cssDisplay
 				});
 				
 				//get the default pos and size of the button
@@ -60,29 +67,19 @@
 				this.settings.initHeight = $(this.element).innerHeight();
 
 				//place placeholder
-				this.placeholder.css( {
-					width: this.settings.initWidth,
-					height: this.settings.initHeight,
-					top: this.settings.initTop,
-					left: this.settings.initLeft
-				} );
+				if(this.settings.placeholder){
+					this.placeholder.css( {
+						width: this.settings.initWidth,
+						height: this.settings.initHeight,
+						top: this.settings.initTop,
+						left: this.settings.initLeft
+					} );
+				}	
 				
 				//bind events
 				this.bindEventMouseOver(this.element, this.settings);
 				this.bindEventMouseMove(this.element, this.settings);
 
-				console.log(this.settings.propertyName );
-				this.yourOtherFunction(this.element, this.settings, "test");
-			},
-			
-			
-			
-			/*
-				Demo Function
-			*/
-			yourOtherFunction: function () {
-				var meh = arguments[2];
-				console.log( meh );
 			},
 			
 			
@@ -195,11 +192,12 @@
 
 (function() {
 	
-    $('.button.normal').stickyButtons({
-		propertyName: 'looool?'
+	$('#header span').stickyButtons({
+		placeholder: false,
+		maxDistance: 100
 	});
 	
-	$('.button.absolute1').stickyButtons({
+    $('.button.normal').stickyButtons({
 		propertyName: 'looool?'
 	});
 	
@@ -207,9 +205,12 @@
 		propertyName: 'looool?'
 	});
 	
-	$('.text-block').stickyButtons({
-		propertyName: 'looool?'
+	$('#div').stickyButtons({
+		placeholder: false,
+		maxDistance: 100
 	});
+	
+
 	
 	/*
     var mX, mY, dX, dY, distance;

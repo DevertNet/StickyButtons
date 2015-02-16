@@ -13,18 +13,60 @@
 html, body {
     padding: 0;
     margin: 0;
+    background-image: url(../img/bg.jpg);
+    background-position: 50% 50%;
+    background-size: cover;
+    background-attachment: fixed;
+    
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2 {
+	font-family: 'Bree Serif', serif;
+	font-weight: normal;
+}
+
+h1 {
+	font-size: 5rem;
+	line-height: 5.5rem;
+	padding-top: 20px;
 }
 
 
+/*
+	Layout
+*/
+#header  {
+	text-align: center;
+	font-family: 'Bree Serif', serif;
+}
+
 section {
-	background-color: #f1f5ff;
+	background-color: #ffffff;
 	padding: 30px 0;
+	min-height: 250px;
 }
 
 section:nth-child(2n) {
-	background-color: #54de7e;
+	background-color: rgba(217,255,219,0.75);
+}
+/*
+	Layout
+*/
+
+
+
+/*
+	Button
+*/
+.button {
+	background-color: #0CBE66;
+	border-radius: 10px;
 }
 
+.button:hover {
+	background-color: #159355;
+}
 
 .button.absolute1 {
 	position: absolute;
@@ -36,16 +78,40 @@ section:nth-child(2n) {
 	top: 50px;
 	left: 80px;
 }
+/*
+	Button
+*/
 
 
+
+/*
+	Placeholder
+*/
 .placeholder {
 	position: absolute;
 	background-color: rgba(226, 0, 26, 0.34);
+	border-radius: 10px;
 }
+/*
+	Placeholder
+*/
 
 
 
 
+
+
+
+
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers:
+ * http://juicystudio.com/article/screen-readers-display-none.php
+ */
 ::-moz-selection {
     background: #b3d4fc;
     text-shadow: none;
@@ -66,19 +132,6 @@ hr {
     padding: 0;
 }
 
-
-
-
-
-
-/* ==========================================================================
-   Helper classes
-   ========================================================================== */
-
-/*
- * Hide visually and from screen readers:
- * http://juicystudio.com/article/screen-readers-display-none.php
- */
 
 .hidden {
     display: none !important;
