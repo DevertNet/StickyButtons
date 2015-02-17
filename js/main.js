@@ -6,7 +6,7 @@
 		var pluginName = "stickyButtons",
 		defaults = {
 			placeholder: true,
-			maxDistance: 200,
+			maxDistance: 110,
 			
 			mouseenterAnimationProperties: { scale: 1.2 },
 			mouseenterAnimationOptionsImportant: { queue: 'stickyButtons-mouseenterleave-animation' },
@@ -51,7 +51,6 @@
 				//get css display prob
 				var cssDisplay = $(this.element).css('display');
 				if (cssDisplay == 'inline') cssDisplay = 'inline-block';
-				console.log( cssDisplay );
 					
 				//set z-index and position
 				$(this.element).css({
@@ -60,6 +59,22 @@
 					display: cssDisplay
 				});
 				
+				//Get Dimensions
+				this.getDimensions(this.element, this.settings);
+				
+				//bind events
+				this.bindEventMouseOver(this.element, this.settings);
+				this.bindEventMouseMove(this.element, this.settings);
+				this.bindEventWindowResize(this.element, this.settings);
+
+			},
+			
+			
+			
+			/*
+				Get Dimensions
+			*/
+			getDimensions: function () {
 				//get the default pos and size of the button
 				this.settings.initLeft = $(this.element).offset().left;
 				this.settings.initTop = $(this.element).offset().top;
@@ -75,11 +90,25 @@
 						left: this.settings.initLeft
 					} );
 				}	
-				
-				//bind events
-				this.bindEventMouseOver(this.element, this.settings);
-				this.bindEventMouseMove(this.element, this.settings);
-
+			},
+			
+			
+			
+			
+			/*
+				Window Resize Event
+			*/
+			bindEventWindowResize: function () {
+				var plugin = this;
+				var resizeTimer;
+				$( window ).resize(function() {
+					clearTimeout( resizeTimer );
+					
+					resizeTimer = window.setTimeout(function(){
+						//Get Dimensions
+						plugin.getDimensions(plugin.element, plugin.settings);
+					}, 100);
+				});
 			},
 			
 			
@@ -98,7 +127,7 @@
 					dY = mY - plugin.settings.initTop - (plugin.settings.initHeight / 2);
 
 					distance = plugin.helperCalculateDistance(plugin.element, plugin.settings, $(plugin.element), mX, mY);
-				
+					
 					if( distance <= plugin.settings.maxDistance && plugin.settings.followMouse){
 						//mouse is in range...who is bob?
 						
@@ -158,7 +187,68 @@
 					elem = arguments[2],
 					mouseX = arguments[3],
 					mouseY = arguments[4];
-				return Math.floor(Math.sqrt(Math.pow(mouseX - (plugin.settings.initLeft+(elem.innerWidth()/2)), 2) + Math.pow(mouseY - (plugin.settings.initTop+(elem.innerHeight()/2)), 2)));
+				
+				var coor = {
+					tl: [ plugin.settings.initLeft, plugin.settings.initTop ],
+					tr: [ (plugin.settings.initLeft + elem.innerWidth()), plugin.settings.initTop ],
+					bl: [ plugin.settings.initLeft, (plugin.settings.initTop + elem.innerHeight()) ],
+					br: [ (plugin.settings.initLeft + elem.innerWidth()), (plugin.settings.initTop + elem.innerHeight()) ]
+				};
+				
+				//calc distance to element border
+				// 1 2 3
+				// 4 # 5
+				// 6 7 8
+				// # = elem
+				
+				if( mouseY >= coor.bl[1] && mouseX >= coor.tl[0] && mouseX <= coor.tr[0] ){
+					//area 7
+					//console.log('area 7');
+					return mouseY - coor.bl[1];
+					
+				}else if( mouseY <= coor.tl[1] && mouseX >= coor.bl[0] && mouseX <= coor.br[0] ){
+					//area 2
+					//console.log('area 2');
+					return coor.tl[1] - mouseY;
+					
+				}else if( mouseY >= coor.tl[1] && mouseY <= coor.bl[1] && mouseX <= coor.bl[0] ){
+					//area 4
+					//console.log('area 4');
+					return coor.tl[0] - mouseX;
+					
+				}else if( mouseY >= coor.tr[1] && mouseY <= coor.br[1] && mouseX >= coor.br[0] ){
+					//area 5
+					//console.log('area 5');
+					return mouseX - coor.tr[0];
+				
+				}else if( mouseX <= coor.tl[0] && mouseY <= coor.tl[1] ){
+					//area 1
+					//console.log('area 1');
+					return Math.floor(Math.sqrt(Math.pow(mouseX - coor.tl[0], 2) + Math.pow(mouseY - coor.tl[1], 2)));
+					
+				}else if( mouseX >= coor.tr[0] && mouseY <= coor.tr[1] ){
+					//area 3
+					//console.log('area 3');
+					return Math.floor(Math.sqrt(Math.pow(mouseX - coor.tr[0], 2) + Math.pow(mouseY - coor.tr[1], 2)));
+					
+				}else if( mouseX <= coor.bl[0] && mouseY >= coor.bl[1] ){
+					//area 6
+					//console.log('area 6');
+					return Math.floor(Math.sqrt(Math.pow(mouseX - coor.bl[0], 2) + Math.pow(mouseY - coor.bl[1], 2)));
+					
+				}else if( mouseX >= coor.br[0] && mouseY >= coor.br[1] ){
+					//area 8
+					//console.log('area 8');
+					return Math.floor(Math.sqrt(Math.pow(mouseX - coor.br[0], 2) + Math.pow(mouseY - coor.br[1], 2)));
+				
+				}else{
+					//area #
+					//console.log('hover');
+					return 0;
+				}
+				
+				//distance to element middle
+				//return Math.floor(Math.sqrt(Math.pow(mouseX - (plugin.settings.initLeft+(elem.innerWidth()/2)), 2) + Math.pow(mouseY - (plugin.settings.initTop+(elem.innerHeight()/2)), 2)));
 			}
 			
 		});
