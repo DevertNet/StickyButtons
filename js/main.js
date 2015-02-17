@@ -6,6 +6,8 @@
 		var pluginName = "stickyButtons",
 		defaults = {
 			placeholder: true,
+			placeholderId: "",
+			placeholderClass: "",
 			maxDistance: 110,
 			
 			mouseenterAnimationProperties: { scale: 1.2 },
@@ -29,7 +31,8 @@
 				this.element = element;
 				this.settings = $.extend( {}, defaults, options );
 				
-				if(this.settings.placeholder) this.placeholder = $('<div></div>').addClass("placeholder").appendTo($("body"));
+				if(this.settings.placeholder) this.placeholder = $('<div></div>').addClass("sb-placeholder").appendTo($("body"));
+				
 				this.settings.mouseenterAnimationOptions = $.extend( {}, this.settings.mouseenterAnimationOptions, this.settings.mouseenterAnimationOptionsImportant );
 				this.settings.mouseleaveAnimationOptions = $.extend( {}, this.settings.mouseleaveAnimationOptions, this.settings.mouseleaveAnimationOptionsImportant );
 				this._defaults = defaults;
@@ -88,7 +91,9 @@
 						height: this.settings.initHeight,
 						top: this.settings.initTop,
 						left: this.settings.initLeft
-					} );
+					} )
+					.attr("id", this.settings.placeholderID)
+					.addClass( this.settings.placeholderClass );
 				}	
 			},
 			
@@ -284,20 +289,20 @@
 	
 	$('#header span').stickyButtons({
 		placeholder: false,
-		maxDistance: 100
+		maxDistance: 50
 	});
 	
-    $('.button.normal').stickyButtons({
-		propertyName: 'looool?'
-	});
+    $('.button.normal').stickyButtons();
 	
-	$('.button.absolute2').stickyButtons({
-		propertyName: 'looool?'
-	});
+	$('.button.absolute2').stickyButtons();
 	
 	$('#div').stickyButtons({
-		placeholder: false,
 		maxDistance: 100
+	});
+	
+	$('.social-button').stickyButtons({
+		maxDistance: 50,
+		placeholderClass: 'social-button-placeholder'
 	});
 	
 

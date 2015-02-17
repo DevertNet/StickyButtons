@@ -34,11 +34,28 @@ h1 {
 
 
 /*
+	Placeholder
+*/
+.sb-placeholder {
+	position: absolute;
+	background-color: rgba(226, 0, 26, 0.34);
+	border-radius: 10px;
+}
+/*
+	Placeholder
+*/
+
+
+/*
 	Layout
 */
 #header  {
 	text-align: center;
 	font-family: 'Bree Serif', serif;
+}
+
+#header a {
+	color: #000;
 }
 
 section {
@@ -49,6 +66,10 @@ section {
 
 section:nth-child(2n) {
 	background-color: rgba(217,255,219,0.75);
+}
+
+section:last-child {
+	padding-bottom: 70px;
 }
 /*
 	Layout
@@ -84,17 +105,70 @@ section:nth-child(2n) {
 
 
 
+
 /*
-	Placeholder
+	DIV
 */
-.placeholder {
-	position: absolute;
-	background-color: rgba(226, 0, 26, 0.34);
-	border-radius: 10px;
+#div {
+	width: 50%;
+	margin: 0 auto;
+	background-color: #d4d4d4;
+	padding: 10px;
 }
 /*
-	Placeholder
+	DIV
 */
+
+
+/*
+	Social
+*/
+.social-buttons {
+	text-align: center;
+	padding-top: 30px;
+}
+
+.social-button {
+	background-color: #0CBE66;
+	border-radius: 200px;
+	display: inline-block;
+	color: #fff;
+	height: 70px;
+	width: 70px;
+	text-align: center;
+	line-height: 70px;
+	font-size: 2rem;
+	margin: 0 30px;
+	transition:background-color 0.3s;
+}
+
+.social-button-placeholder {
+	background-color: #e6e6e6;
+	border-radius: 200px;
+-webkit-box-shadow: inset 2px 2px 5px 1px rgba(199,199,199,1);
+-moz-box-shadow: inset 2px 2px 5px 1px rgba(199,199,199,1);
+box-shadow: inset 2px 2px 5px 1px rgba(199,199,199,1);
+}
+
+.social-button:hover {
+	background-color: #159355;
+	color: #fff;
+}
+
+.social-button i {
+	transition:transform .8s;
+}
+.social-button:hover i {
+	transform: scale(1.4);
+}
+/*
+	Social
+*/
+
+
+
+
+
 
 
 
