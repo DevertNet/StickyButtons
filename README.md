@@ -1,7 +1,11 @@
-# StickyButtons
+# StickyButtons.js
 Buttons they stick at the mouse cursor.
 
 [Demo](http://devert.net/)
+
+### Required / Dependencies
+[Velocity.js](http://julian.com/research/velocity/)
+
 
 ### How to
 
@@ -24,6 +28,8 @@ $('.element').stickyButtons( {
 } );
 ```
 
+
+### Options
 | Option | Default | Info |
 |:---|:---|:---|
 | placeholder | boolean(true) | Add a placeholder element to the end of the body. |
@@ -34,3 +40,7 @@ $('.element').stickyButtons( {
 | onMove | function(plugin, mX, mY, dX, dY, middleX, middleY, distance){ } | Callback during the move/sticky of the element. |
 | onUnSticky | function(plugin, mX, mY, dX, dY, middleX, middleY, distance, actX, actY){ } | Callback once on unsticky. |
 | mouseEnterLeaveAnimation | boolean(true) | Disable/Enable a mouseover / mouseleave animation. E.g. if you want to set the hover animation with css. |
+
+
+### Callbacks
+Infos coming soon...

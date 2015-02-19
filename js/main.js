@@ -32,7 +32,9 @@
 			initTop: 0,
 			initLeft: 0,
 			initWidth: 0,
-			initHeight: 0
+			initHeight: 0,
+			parentInitTop: 0,
+			parentInitLeft: 0
 		};
 
 		// The actual plugin constructor
@@ -95,8 +97,14 @@
 				//get the default pos and size of the button
 				this.settings.initLeft = $(this.element).offset().left;
 				this.settings.initTop = $(this.element).offset().top;
+				this.settings.parentInitLeft = $(this.element).offsetParent().offset().left;
+				this.settings.parentInitTop = $(this.element).offsetParent().offset().top;
+				this.settings.parentInitLeft = this.settings.initLeft - $(this.element).position().left;
+				this.settings.parentInitTop = this.settings.initTop - $(this.element).position().top;
 				this.settings.initWidth = $(this.element).innerWidth();
 				this.settings.initHeight = $(this.element).innerHeight();
+				
+				//console.log( $(this.element).position().left );
 
 				//place placeholder
 				if(this.settings.placeholder){
@@ -144,8 +152,8 @@
 					mY = e.pageY;
 					dX = mX - plugin.settings.initLeft - (plugin.settings.initWidth / 2);
 					dY = mY - plugin.settings.initTop - (plugin.settings.initHeight / 2);
-					middleX = mX - (plugin.settings.initWidth / 2);
-					middleY = mY - (plugin.settings.initHeight / 2);
+					middleX = mX - (plugin.settings.initWidth / 2) - plugin.settings.parentInitLeft;
+					middleY = mY - (plugin.settings.initHeight / 2) - plugin.settings.parentInitTop;
 
 					distance = plugin.helperCalculateDistance(plugin.element, plugin.settings, $(plugin.element), mX, mY);
 					
@@ -185,7 +193,7 @@
 							var actY = parseInt( $.Velocity.hook($(plugin.element), "top") );
 
 							$(plugin.element).velocity("stop", "stickyButtons-back-animation")
-							.velocity({ left: [ plugin.settings.initLeft, actX ], top: [ plugin.settings.initTop, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
+							.velocity({ left: [ plugin.settings.initLeft-plugin.settings.parentInitLeft, actX ], top: [ plugin.settings.initTop-plugin.settings.parentInitTop, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
 							.dequeue("stickyButtons-back-animation");
 						}else{
 							//animate translateX translateY
@@ -335,23 +343,28 @@
 
 (function() {
 	
+/*
 	$('#header span').stickyButtons({
 		placeholder: false,
 		maxDistance: 50
 	});
+*/
 	
-    $('.button.normal').stickyButtons();
+    $('.button.normal').stickyButtons( { useCss3: false } );
 	
-	$('.button.absolute2').stickyButtons();
+
+	$('.button.absolute2').stickyButtons({ useCss3: false });
 	
-	$('#div').stickyButtons({
-		maxDistance: 100
+/*	$('#div').stickyButtons({
+		maxDistance: 80,
+		mouseEnterLeaveAnimation: false
 	});
 	
 	$('.social-button').stickyButtons({
 		maxDistance: 50,
 		placeholderClass: 'social-button-placeholder'
 	});
+*/
 	
 
 	
