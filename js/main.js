@@ -5,24 +5,30 @@
 		// Create the defaults once
 		var pluginName = "stickyButtons",
 		defaults = {
+			//settings
 			placeholder: true,
 			placeholderId: "",
 			placeholderClass: "",
 			maxDistance: 110,
+			useCss3: true,
 			
+			//callbacks
 			onMove: false,
 			onUnSticky: false,
 			
+			//hover enter
+			mouseEnterLeaveAnimation: true,
 			mouseenterAnimationProperties: { scale: 1.2 },
 			mouseenterAnimationOptionsImportant: { queue: 'stickyButtons-mouseenterleave-animation' },
 			mouseenterAnimationOptions: { duration: 200 },
 			
+			//hover leave
 			mouseleaveAnimationProperties: { scale: 1 },
 			mouseleaveAnimationOptionsImportant: { queue: 'stickyButtons-mouseenterleave-animation' },
 			mouseleaveAnimationOptions: { duration: 300, delay: 50 },
 			
+			//internal
 			followMouse: false,
-			
 			initTop: 0,
 			initLeft: 0,
 			initWidth: 0,
@@ -50,6 +56,11 @@
 			*/
 			init: function () {
 				
+				//check for velocity.js
+				if(!jQuery().velocity) {
+					console.error("StickyButtons.js: Can't find Velocity.js!");
+				}
+				
 				//get css position prob
 				var cssPosition = $(this.element).css('position');
 				if (cssPosition != 'absolute' && cssPosition != 'relative') cssPosition = 'relative';
@@ -69,7 +80,7 @@
 				this.getDimensions(this.element, this.settings);
 				
 				//bind events
-				this.bindEventMouseOver(this.element, this.settings);
+				if(this.settings.mouseEnterLeaveAnimation) this.bindEventMouseOver(this.element, this.settings);
 				this.bindEventMouseMove(this.element, this.settings);
 				this.bindEventWindowResize(this.element, this.settings);
 
@@ -138,16 +149,21 @@
 
 					distance = plugin.helperCalculateDistance(plugin.element, plugin.settings, $(plugin.element), mX, mY);
 					
+					//mouse over element: distance = 0
+					if(distance==0) plugin.settings.followMouse = true;
+					
 					if( distance <= plugin.settings.maxDistance && plugin.settings.followMouse){
 						//mouse is in range...who is bob?
 						
 						bob = true;
 
 						$(plugin.element).velocity("stop", "stickyButtons-back-animation");
-						if(true){
+						if(!plugin.settings.useCss3){
+							//animate top / left
 							$.Velocity.hook($(plugin.element), "left", middleX+"px");
 							$.Velocity.hook($(plugin.element), "top", middleY+"px");
 						}else{
+							//animate translateX translateY
 							$.Velocity.hook($(plugin.element), "translateX", dX+"px");
 							$.Velocity.hook($(plugin.element), "translateY", dY+"px");
 						}
@@ -163,7 +179,8 @@
 						bob = false;
 						plugin.settings.followMouse = false;
 
-						if(true){
+						if(!plugin.settings.useCss3){
+							//animate top / left
 							var actX = parseInt( $.Velocity.hook($(plugin.element), "left") );
 							var actY = parseInt( $.Velocity.hook($(plugin.element), "top") );
 
@@ -171,11 +188,14 @@
 							.velocity({ left: [ plugin.settings.initLeft, actX ], top: [ plugin.settings.initTop, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
 							.dequeue("stickyButtons-back-animation");
 						}else{
-							var actX = parseInt( $.Velocity.hook($(plugin.element), "translateX") );
-							var actY = parseInt( $.Velocity.hook($(plugin.element), "translateY") );
-
+							//animate translateX translateY
+							var css3actX = parseInt( $.Velocity.hook($(plugin.element), "translateX") );
+							var css3actY = parseInt( $.Velocity.hook($(plugin.element), "translateY") );
+							var actX = plugin.settings.initLeft + css3actX;
+							var actY = plugin.settings.initTop + css3actY;
+							
 							$(plugin.element).velocity("stop", "stickyButtons-back-animation")
-							.velocity({ translateX: [ 0, actX ], translateY: [ 0, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
+							.velocity({ translateX: [ 0, css3actX ], translateY: [ 0, css3actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
 							.dequeue("stickyButtons-back-animation");
 						}
 						
@@ -196,7 +216,6 @@
 				var plugin = this;
 				//mouseenter
 				$(plugin.element).mouseenter (function() {
-					plugin.settings.followMouse = true;
 					$(this).velocity("stop", 'stickyButtons-mouseenterleave-animation').velocity( 
 						plugin.settings.mouseenterAnimationProperties, 
 						plugin.settings.mouseenterAnimationOptions
