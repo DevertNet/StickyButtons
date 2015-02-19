@@ -10,6 +10,9 @@
 			placeholderClass: "",
 			maxDistance: 110,
 			
+			onMove: false,
+			onUnSticky: false,
+			
 			mouseenterAnimationProperties: { scale: 1.2 },
 			mouseenterAnimationOptionsImportant: { queue: 'stickyButtons-mouseenterleave-animation' },
 			mouseenterAnimationOptions: { duration: 200 },
@@ -124,12 +127,14 @@
 			bindEventMouseMove: function () {
 				var plugin = this;
 				
-				var bob = false, mX, mY, dX, dY, distance;
+				var bob = false, mX, mY, dX, dY, middleX, middleY, distance;
 				$(document).mousemove(function(e) {  
 					mX = e.pageX;
 					mY = e.pageY;
 					dX = mX - plugin.settings.initLeft - (plugin.settings.initWidth / 2);
 					dY = mY - plugin.settings.initTop - (plugin.settings.initHeight / 2);
+					middleX = mX - (plugin.settings.initWidth / 2);
+					middleY = mY - (plugin.settings.initHeight / 2);
 
 					distance = plugin.helperCalculateDistance(plugin.element, plugin.settings, $(plugin.element), mX, mY);
 					
@@ -137,23 +142,47 @@
 						//mouse is in range...who is bob?
 						
 						bob = true;
-						//$element.velocity("stop").css({transform: 'translateX('+dX+'px) translateY('+dY+'px)'});
+
 						$(plugin.element).velocity("stop", "stickyButtons-back-animation");
-						$.Velocity.hook($(plugin.element), "translateX", dX+"px");
-						$.Velocity.hook($(plugin.element), "translateY", dY+"px");
-						//$element.velocity("stop").velocity({ translateX: dX, translateY: dY }, 'linear', { duration: 100 });
+						if(true){
+							$.Velocity.hook($(plugin.element), "left", middleX+"px");
+							$.Velocity.hook($(plugin.element), "top", middleY+"px");
+						}else{
+							$.Velocity.hook($(plugin.element), "translateX", dX+"px");
+							$.Velocity.hook($(plugin.element), "translateY", dY+"px");
+						}
+						
+						//callback onMove
+						if (typeof plugin.settings.onMove == 'function') {
+							plugin.settings.onMove.call(plugin, mX, mY, dX, dY, middleX, middleY, distance);
+						}
+
 					}else if( bob ){
 						//mouse leave range. fire once!
 						
 						bob = false;
 						plugin.settings.followMouse = false;
 
-						var x = parseInt( $.Velocity.hook($(plugin.element), "translateX") );
-						var y = parseInt( $.Velocity.hook($(plugin.element), "translateY") );
+						if(true){
+							var actX = parseInt( $.Velocity.hook($(plugin.element), "left") );
+							var actY = parseInt( $.Velocity.hook($(plugin.element), "top") );
+
+							$(plugin.element).velocity("stop", "stickyButtons-back-animation")
+							.velocity({ left: [ plugin.settings.initLeft, actX ], top: [ plugin.settings.initTop, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
+							.dequeue("stickyButtons-back-animation");
+						}else{
+							var actX = parseInt( $.Velocity.hook($(plugin.element), "translateX") );
+							var actY = parseInt( $.Velocity.hook($(plugin.element), "translateY") );
+
+							$(plugin.element).velocity("stop", "stickyButtons-back-animation")
+							.velocity({ translateX: [ 0, actX ], translateY: [ 0, actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
+							.dequeue("stickyButtons-back-animation");
+						}
 						
-						$(plugin.element).velocity("stop", "stickyButtons-back-animation")
-						.velocity({ translateX: [ 0, x ], translateY: [ 0, y ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
-						.dequeue("stickyButtons-back-animation");
+						//callback onUnSticky
+						if (typeof plugin.settings.onUnSticky == 'function') {
+							plugin.settings.onUnSticky.call(plugin, mX, mY, dX, dY, middleX, middleY, distance, actX, actY);
+						}
 					}
 
 				});
