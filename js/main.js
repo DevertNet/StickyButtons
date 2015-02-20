@@ -57,7 +57,7 @@
 				Init
 			*/
 			init: function () {
-				
+								
 				//check for velocity.js
 				if(!jQuery().velocity) {
 					console.error("StickyButtons.js: Can't find Velocity.js!");
@@ -88,6 +88,9 @@
 
 			},
 			
+			test: function () {
+				console.log('lol HE CATCHED MEEE!!!!' + this.settings.initTop);
+			},
 			
 			
 			/*
@@ -137,6 +140,7 @@
 					}, 100);
 				});
 			},
+
 			
 			
 			
@@ -199,8 +203,8 @@
 							//animate translateX translateY
 							var css3actX = parseInt( $.Velocity.hook($(plugin.element), "translateX") );
 							var css3actY = parseInt( $.Velocity.hook($(plugin.element), "translateY") );
-							var actX = plugin.settings.initLeft + css3actX;
-							var actY = plugin.settings.initTop + css3actY;
+							var actX = plugin.settings.initLeft + css3actX - plugin.settings.parentInitLeft;
+							var actY = plugin.settings.initTop + css3actY - plugin.settings.parentInitTop;
 							
 							$(plugin.element).velocity("stop", "stickyButtons-back-animation")
 							.velocity({ translateX: [ 0, css3actX ], translateY: [ 0, css3actY ] }, { duration: 200, delay: 100, queue:'stickyButtons-back-animation' })
@@ -318,8 +322,23 @@
 		// preventing against multiple instantiations
 		$.fn[ pluginName ] = function ( options ) {
 				return this.each(function() {
+					
 						if ( !$.data( this, "plugin_" + pluginName ) ) {
 								$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
+						}else{
+							//method calls...coming soon...
+							/*
+							var plugin = $.data( this, "plugin_" + pluginName);
+							
+							//plugin.test();
+							
+							var fn = plugin.__proto__[options];
+							console.log(fn);
+							if (typeof fn === "function"){
+								console.log('bob???');
+								fn();
+							}
+							*/
 						}
 				});
 		};
@@ -343,19 +362,19 @@
 
 (function() {
 	
-/*
+
 	$('#header span').stickyButtons({
 		placeholder: false,
 		maxDistance: 50
 	});
-*/
+
 	
     $('.button.normal').stickyButtons( { useCss3: false } );
 	
 
 	$('.button.absolute2').stickyButtons({ useCss3: false });
 	
-/*	$('#div').stickyButtons({
+	$('#div').stickyButtons({
 		maxDistance: 80,
 		mouseEnterLeaveAnimation: false
 	});
@@ -364,7 +383,7 @@
 		maxDistance: 50,
 		placeholderClass: 'social-button-placeholder'
 	});
-*/
+
 	
 
 	
