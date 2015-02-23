@@ -43,4 +43,22 @@ $('.element').stickyButtons( {
 
 
 ### Callbacks
-Infos coming soon...
+# onMove
+Called every time the button moves with the mouse.
+
+# onUnSticky
+Called once the button released from mouse. Does not overwrite the back-animation.
+
+
+### Methods / API
+# overwriteSettings
+Overwrite the settings / options from the init. You can't change the placeholder(/Id/Class) settings.
+```js
+$('.element').stickyButtons( "overwriteSettings", { maxDistance: 200 } );
+```
+
+# getDimensions
+Recalc the placeholder and other internal dimension variables. Not necessary to trigger this method from a resize event, because the plugin does this for you.
+```js
+$('.element').stickyButtons( "getDimensions" );
+```

@@ -111,5 +111,34 @@
         <script src="js/velocity.min.js"></script>
         <script src="js/velocity.ui.min.js"></script>
         <script src="js/main.js"></script>
+        
+        <script>
+			(function() {
+				
+			
+				$('#header span').stickyButtons({
+					placeholder: false,
+					maxDistance: 50
+				});
+			
+				
+			    $('.button.normal').stickyButtons();
+				
+			
+				$('.button.absolute2').stickyButtons();
+				
+				$('#div').stickyButtons({
+					maxDistance: 80,
+					mouseEnterLeaveAnimation: false
+				});
+				
+				$('.social-button').stickyButtons({
+					maxDistance: 50,
+					placeholderClass: 'social-button-placeholder'
+				});
+			
+				
+			})();
+        </script>
     </body>
 </html>

@@ -70,26 +70,37 @@
 				//get css display prob
 				var cssDisplay = $(this.element).css('display');
 				if (cssDisplay == 'inline') cssDisplay = 'inline-block';
+				
+				var cssZindex = parseInt($(this.element).css('z-index'));
+				if (isNaN(cssZindex)) cssZindex = 3;
 					
 				//set z-index and position
 				$(this.element).css({
 					position: cssPosition,
-					zIndex: 3,
+					zIndex: cssZindex,
 					display: cssDisplay
 				});
 				
 				//Get Dimensions
-				this.getDimensions(this.element, this.settings);
+				this.getDimensions();
 				
 				//bind events
-				if(this.settings.mouseEnterLeaveAnimation) this.bindEventMouseOver(this.element, this.settings);
-				this.bindEventMouseMove(this.element, this.settings);
-				this.bindEventWindowResize(this.element, this.settings);
+				if(this.settings.mouseEnterLeaveAnimation) this.bindEventMouseOver();
+				this.bindEventMouseMove();
+				this.bindEventWindowResize();
 
 			},
 			
-			test: function () {
-				console.log('lol HE CATCHED MEEE!!!!' + this.settings.initTop);
+			
+			/*
+				Overwrite Settings
+			*/
+			overwriteSettings: function () {
+				var newSettings = arguments[0];
+
+				if( typeof newSettings=='object' ){
+					this.settings = $.extend( {}, this.settings, newSettings );
+				}
 			},
 			
 			
@@ -97,17 +108,21 @@
 				Get Dimensions
 			*/
 			getDimensions: function () {
+				var offsetParentEl = $(this.element).offsetParent()
+			
 				//get the default pos and size of the button
 				this.settings.initLeft = $(this.element).offset().left;
 				this.settings.initTop = $(this.element).offset().top;
-				this.settings.parentInitLeft = $(this.element).offsetParent().offset().left;
-				this.settings.parentInitTop = $(this.element).offsetParent().offset().top;
-				this.settings.parentInitLeft = this.settings.initLeft - $(this.element).position().left;
-				this.settings.parentInitTop = this.settings.initTop - $(this.element).position().top;
+				this.settings.parentInitLeft = offsetParentEl.offset().left;
+				this.settings.parentInitTop = offsetParentEl.offset().top;
+				if( $(this.element).css('position') == 'relative' ){
+					this.settings.parentInitLeft += parseInt(offsetParentEl.css('padding-left'));
+					this.settings.parentInitTop += parseInt(offsetParentEl.css('padding-top'));
+				}
+				//this.settings.parentInitLeft = this.settings.initLeft - $(this.element).position().left;
+				//this.settings.parentInitTop = this.settings.initTop - $(this.element).position().top;
 				this.settings.initWidth = $(this.element).innerWidth();
 				this.settings.initHeight = $(this.element).innerHeight();
-				
-				//console.log( $(this.element).position().left );
 
 				//place placeholder
 				if(this.settings.placeholder){
@@ -136,7 +151,7 @@
 					
 					resizeTimer = window.setTimeout(function(){
 						//Get Dimensions
-						plugin.getDimensions(plugin.element, plugin.settings);
+						plugin.getDimensions();
 					}, 100);
 				});
 			},
@@ -159,7 +174,7 @@
 					middleX = mX - (plugin.settings.initWidth / 2) - plugin.settings.parentInitLeft;
 					middleY = mY - (plugin.settings.initHeight / 2) - plugin.settings.parentInitTop;
 
-					distance = plugin.helperCalculateDistance(plugin.element, plugin.settings, $(plugin.element), mX, mY);
+					distance = plugin.helperCalculateDistance($(plugin.element), mX, mY);
 					
 					//mouse over element: distance = 0
 					if(distance==0) plugin.settings.followMouse = true;
@@ -249,9 +264,9 @@
 			*/
 			helperCalculateDistance: function () {
 				var plugin = this,
-					elem = arguments[2],
-					mouseX = arguments[3],
-					mouseY = arguments[4];
+					elem = arguments[0],
+					mouseX = arguments[1],
+					mouseY = arguments[2];
 				
 				var coor = {
 					tl: [ plugin.settings.initLeft, plugin.settings.initTop ],
@@ -321,24 +336,22 @@
 		// A really lightweight plugin wrapper around the constructor,
 		// preventing against multiple instantiations
 		$.fn[ pluginName ] = function ( options ) {
+				var args = (arguments.length > 1) ? Array.prototype.slice.call(arguments, 1) : undefined;
+		
 				return this.each(function() {
 					
 						if ( !$.data( this, "plugin_" + pluginName ) ) {
-								$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
+							//create plugin instance
+							$.data( this, "plugin_" + pluginName, new Plugin( this, options ) );
 						}else{
-							//method calls...coming soon...
-							/*
+							//method calls
 							var plugin = $.data( this, "plugin_" + pluginName);
 							
-							//plugin.test();
-							
-							var fn = plugin.__proto__[options];
-							console.log(fn);
+							var fn = plugin[options];
 							if (typeof fn === "function"){
-								console.log('bob???');
-								fn();
+								fn.apply(plugin, args);
 							}
-							*/
+							
 						}
 				});
 		};
@@ -347,109 +360,5 @@
 
 
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
-
-
-(function() {
-	
-
-	$('#header span').stickyButtons({
-		placeholder: false,
-		maxDistance: 50
-	});
-
-	
-    $('.button.normal').stickyButtons( { useCss3: false } );
-	
-
-	$('.button.absolute2').stickyButtons({ useCss3: false });
-	
-	$('#div').stickyButtons({
-		maxDistance: 80,
-		mouseEnterLeaveAnimation: false
-	});
-	
-	$('.social-button').stickyButtons({
-		maxDistance: 50,
-		placeholderClass: 'social-button-placeholder'
-	});
-
-	
-
-	
-	/*
-    var mX, mY, dX, dY, distance;
-    
-    var $element  = $('.button.first');
-	var left = $element.offset().left;
-	var top = $element.offset().top;
-	var width = $element.innerWidth();
-	var height = $element.innerHeight();
-
-
-	
-	//placeholder
-	$('<div></div>')
-	.addClass("placeholder")
-	.css( {
-		width: width,
-		height: height,
-		top: top,
-		left: left
-	} )
-	.appendTo($("body"));
-	var $placeholder  = $('.placeholder');
-	
-    function calculateDistance(elem, mouseX, mouseY) {
-        return Math.floor(Math.sqrt(Math.pow(mouseX - (left+(elem.innerWidth()/2)), 2) + Math.pow(mouseY - (top+(elem.innerHeight()/2)), 2)));
-    }
-    
-    var bob = false;
-	var follow = false;
-    $(document).mousemove(function(e) {  
-        mX = e.pageX;
-        mY = e.pageY;
-		dX = mX - left - (width / 2);
-		dY = mY - top - (height / 2);
-		
-
-        distance = calculateDistance($element, mX, mY);
-		
-        if( distance<= 150 && follow){
-        	bob = true;
-	        //$element.velocity("stop").css({transform: 'translateX('+dX+'px) translateY('+dY+'px)'});
-			$element.velocity("stop", "back-animation");
-			$.Velocity.hook($element, "translateX", dX+"px");
-			$.Velocity.hook($element, "translateY", dY+"px");
-			//$element.velocity("stop").velocity({ translateX: dX, translateY: dY }, 'linear', { duration: 100 });
-        }else if( bob ){
-        	bob = false;
-			follow = false;
-			
-			var x = parseInt( $.Velocity.hook($element, "translateX") );
-			var y = parseInt( $.Velocity.hook($element, "translateY") );
-	        $element.velocity("stop", "back-animation").velocity({ translateX: [ 0, x ], translateY: [ 0, y ] }, { duration: 200, delay: 100, queue:'back-animation' }).dequeue("back-animation");
-        }
-        
-    });
-	
-	$element.mouseenter (function() {
-		follow = true;
-		$element.velocity({ scale: 1.2 }, { duration: 200, queue: false });
-	})
-	.mouseleave (function() {
-		$element.velocity({ scale: 1 }, { duration: 200, queue: false });
-	});
-	*/
-
-})();
