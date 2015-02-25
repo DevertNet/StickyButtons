@@ -1,7 +1,7 @@
 # StickyButtons.js
 Buttons they stick at the mouse cursor.
 
-[Demo](http://devert.net/)
+[Demo](http://devert.net/_dev/StickyButtons/)
 
 ### Required / Dependencies
 [Velocity.js](http://julian.com/research/velocity/)
@@ -43,21 +43,21 @@ $('.element').stickyButtons( {
 
 
 ### Callbacks
-# onMove
+<b>onMove</b>
 Called every time the button moves with the mouse.
 
-# onUnSticky
+<b># onUnSticky</b>
 Called once the button released from mouse. Does not overwrite the back-animation.
 
 
 ### Methods / API
-# overwriteSettings
+<b>overwriteSettings</b>
 Overwrite the settings / options from the init. You can't change the placeholder(/Id/Class) settings.
 ```js
 $('.element').stickyButtons( "overwriteSettings", { maxDistance: 200 } );
 ```
 
-# getDimensions
+<b>getDimensions</b>
 Recalc the placeholder and other internal dimension variables. Not necessary to trigger this method from a resize event, because the plugin does this for you.
 ```js
 $('.element').stickyButtons( "getDimensions" );
